@@ -1,9 +1,12 @@
+import { VideoPlayer } from './lib/index.js';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
+      <VideoPlayer />
+
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>

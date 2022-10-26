@@ -1,6 +1,6 @@
 {
   "name": "@hydradox/react-video-player",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "author": "Jaime Cantos",
   "keywords": ["react", "component", "ui", "video player"],
   "main": "dist/index.js",
