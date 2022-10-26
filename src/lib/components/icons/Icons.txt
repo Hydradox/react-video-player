@@ -1,0 +1,25 @@
+Play:
+https://www.svgrepo.com/svg/204978/play
+
+
+Pause:
+https://www.svgrepo.com/svg/74606/pause
+
+
+Volume:
+https://www.svgrepo.com/svg/305370/volume-up
+
+
+Gear:
+https://www.svgrepo.com/svg/78683/gear
+
+
+Fullscreen:
+https://www.svgrepo.com/svg/379167/fullscreen
+
+Exit Fullscreen:
+https://www.svgrepo.com/svg/344866/fullscreen-exit
+
+
+Chromecast:
+https://www.svgrepo.com/svg/341688/chromecast

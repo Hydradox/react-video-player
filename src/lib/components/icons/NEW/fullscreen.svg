@@ -1,0 +1,20 @@
+<svg width="95" height="95" viewBox="0 0 95 95" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="fullscreen">
+<g id="tl-corner">
+<rect id="tl-bottom" x="9.05816" y="8.12347" width="10.6046" height="28.2791" rx="5.30232" fill="white"/>
+<rect id="tl-top" x="9.05816" y="18.7281" width="10.6046" height="28.2791" rx="5.30232" transform="rotate(-90 9.05816 18.7281)" fill="white"/>
+</g>
+<g id="tr-corner">
+<rect id="tr-top" x="85.9418" y="8.12347" width="10.6046" height="27.3953" rx="5.30232" transform="rotate(90 85.9418 8.12347)" fill="white"/>
+<rect id="tr-bottom" x="75.3372" y="8.12347" width="10.6046" height="27.3953" rx="5.30232" fill="white"/>
+</g>
+<g id="br-corner">
+<rect id="br-top" x="85.9418" y="85.8909" width="10.6046" height="27.3953" rx="5.30232" transform="rotate(-180 85.9418 85.8909)" fill="white"/>
+<rect id="br-bottom" x="85.9418" y="75.2862" width="10.6046" height="27.3953" rx="5.30232" transform="rotate(90 85.9418 75.2862)" fill="white"/>
+</g>
+<g id="bl-corner">
+<rect id="bl-bottom" x="9.05816" y="86" width="10.6046" height="28.2791" rx="5.30232" transform="rotate(-90 9.05816 86)" fill="white"/>
+<rect id="bl-top" x="19.6628" y="86" width="10.6046" height="28.2791" rx="5.30232" transform="rotate(-180 19.6628 86)" fill="white"/>
+</g>
+</g>
+</svg>

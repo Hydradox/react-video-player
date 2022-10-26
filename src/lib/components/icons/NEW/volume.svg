@@ -1,0 +1,13 @@
+<svg width="112" height="95" viewBox="0 0 112 95" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="volume" clip-path="url(#clip0_4_21)">
+<path id="triangle" d="M9.36436 43.7204C7.06205 45.7142 7.06205 49.2858 9.36436 51.2796L46.2267 83.2034C49.4649 86.0078 54.5 83.7075 54.5 79.4237L54.5 15.5762C54.5 11.2925 49.4649 8.99222 46.2267 11.7966L9.36436 43.7204Z" fill="white"/>
+<rect id="Rectangle 7" x="30" y="36" width="23" height="28" rx="7" transform="rotate(90 30 36)" fill="white"/>
+<path id="vol-bar-2" d="M70 12C106 12 106 82 70 82" stroke="white" stroke-width="9" stroke-linecap="round"/>
+<path id="vol-bar-1" d="M71.9091 57C77.3636 57 77.3636 36 71.9091 36C71.1818 36 71 37.5556 71 38.3333V54.6667C71 55.4444 71.1818 57 71.9091 57Z" stroke="white" stroke-width="8" stroke-linecap="round"/>
+</g>
+<defs>
+<clipPath id="clip0_4_21">
+<rect width="112" height="95" fill="white"/>
+</clipPath>
+</defs>
+</svg>

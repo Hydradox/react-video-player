@@ -1,0 +1,77 @@
+$animationParams: .3s ease-in-out 0s 1;
+$expandSize: 7%;
+$shrinkSize: 5%;
+
+
+/* Animation only with no preference */
+@media (prefers-reduced-motion: no-preference) {
+    #FullscreenEnterIcon.Hovered {
+        #tl-corner { animation: expandTL $animationParams; }
+        #tr-corner { animation: expandTR $animationParams; }
+        #br-corner { animation: expandBR $animationParams; }
+        #bl-corner { animation: expandBL $animationParams; }
+    }
+}
+
+@keyframes expandTL {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(-$expandSize) translateY(-$expandSize); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes expandTR {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX($expandSize) translateY(-$expandSize); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes expandBR {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX($expandSize) translateY($expandSize); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes expandBL {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(-$expandSize) translateY($expandSize); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+
+
+
+
+
+/* Animation only with no preference */
+@media (prefers-reduced-motion: no-preference) {
+    #FullscreenExitIcon.Hovered {
+        #exit-tl-corner { animation: shrinkTL $animationParams; }
+        #exit-tr-corner { animation: shrinkTR $animationParams; }
+        #exit-br-corner { animation: shrinkBR $animationParams; }
+        #exit-bl-corner { animation: shrinkBL $animationParams; }
+    }
+}
+
+@keyframes shrinkTL {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX($shrinkSize) translateY($shrinkSize); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes shrinkTR {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(-$shrinkSize) translateY($shrinkSize); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes shrinkBR {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(-$shrinkSize) translateY(-$shrinkSize); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes shrinkBL {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX($shrinkSize) translateY(-$shrinkSize); }
+    100% { transform: translateX(0) translateY(0); }
+}
