@@ -1,0 +1,118 @@
+.Buttons {
+    --buttons-height: calc(1.5vh + 2.2rem);
+    --buttons-separation: calc(.4rem + .2vh);
+
+
+    width: 100%;
+    height: var(--buttons-height);
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.Group {
+    width: fit-content;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+}
+
+.Button {
+    width: auto;
+    height: 90%;
+
+    padding: var(--buttons-separation);
+    box-sizing: border-box;
+    cursor: pointer;
+
+    filter: opacity(.9);
+    transition: filter 100ms ease-in-out;
+}
+
+.Button:hover {
+    filter: opacity(1);
+}
+
+.Button img,
+.Button svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+
+
+/*
+ * VOLUME SLIDER START
+ */
+.VolumeWrapper {
+    display: flex;
+    align-items: center;
+
+    --volumeWidth: 5rem;
+    --volumeHeight: .3rem;
+    --volumeThumbHeight: .7rem;
+}
+
+.VolumeSlider {
+    width: var(--volumeWidth);
+    height: var(--volumeHeight);
+
+    -webkit-appearance: none;
+    cursor: pointer;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.35);
+
+    /* Hacky stuff for lower fill (Thanks: https://codepen.io/tippingpointdev/pen/bGgLqLY) */
+    background-image: linear-gradient(#fff, #fff);
+    background-size: 30% 100%;
+    background-repeat: no-repeat;
+}
+
+
+
+/* Webkit browsers */
+/*.VolumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: var(--volumeWidth);
+    height: var(--volumeHeight);
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+
+    transition-property: width, height;
+    transition-duration: 100ms;
+    transition-timing-function: ease-out;
+}
+
+
+/* Moz browsers *
+.VolumeSlider::-moz-range-thumb {
+    -webkit-appearance: none;
+    width: var(--volumeWidth);
+    height: var(--volumeHeight);
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+
+    transition-property: width, height;
+    transition-duration: 100ms;
+    transition-timing-function: ease-out;
+}
+
+
+
+/* Hover animation *
+.VolumeSliderWrapper:hover .VolumeSlider::-webkit-slider-thumb {
+    width: var(--volumeThumbHeight);
+    height: var(--volumeThumbHeight);
+}
+
+.VolumeSliderWrapper:hover .VolumeSlider::-moz-range-thumb {
+    width: var(--volumeThumbHeight);
+    height: var(--volumeThumbHeight);
+}*/
+/*
+ * VOLUME SLIDER END
+ */

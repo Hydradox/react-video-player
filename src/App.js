@@ -1,24 +1,22 @@
+import { useState } from 'react';
 import { VideoPlayer } from './lib/index.js';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-      <VideoPlayer />
+  const [theaterActive, setTheaterActive] = useState(false);
 
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  function handleTheaterChange(value) {
+    setTheaterActive(value);
+  }
+
+  return (
+    <div className={"App " + (theaterActive ? "TheatreMode" : "")}>
+      <VideoPlayer
+        src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        backgroundColor="lightgreen"
+        progressBarColor="rgb(24, 146, 0)"
+        handleTheaterModeChange={handleTheaterChange}
+      />
     </div>
   );
 }

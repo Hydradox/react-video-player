@@ -1,0 +1,27 @@
+.TimelineWrapper {
+    position: relative;
+    bottom: -.3rem;
+
+    width: 100%;
+    height: 1.3rem;
+
+    padding: .5rem .5rem;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+    transition: padding 100ms ease-in-out;
+}
+
+.TimelineWrapper:hover {
+    padding: .35rem .5rem;
+}
+
+.Timeline {
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.35);
+}
