@@ -1,0 +1,79 @@
+#FullscreenEnterIcon,
+#FullscreenExitIcon {
+    --animation-params: .3s ease-in-out 0s 1;
+    --expand-size: 7%;
+    --shrink-size: 5%;
+
+    --negative-expand-size: calc(var(--expand-size) * -1);
+    --negative-shrink-size: calc(var(--shrink-size) * -1);
+}
+
+
+/* Animation only with no preference */
+@media (prefers-reduced-motion: no-preference) {
+    #FullscreenEnterIcon.Hovered #tl-corner { animation: expandTL var(--animation-params); }
+    #FullscreenEnterIcon.Hovered #tr-corner { animation: expandTR var(--animation-params); }
+    #FullscreenEnterIcon.Hovered #br-corner { animation: expandBR var(--animation-params); }
+    #FullscreenEnterIcon.Hovered #bl-corner { animation: expandBL var(--animation-params); }
+}
+
+@keyframes expandTL {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(var(--negative-expand-size)) translateY(var(--negative-expand-size)); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes expandTR {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(var(--expand-size)) translateY(var(--negative-expand-size)); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes expandBR {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(var(--expand-size)) translateY(var(--expand-size)); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes expandBL {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(var(--negative-expand-size)) translateY(var(--expand-size)); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+
+
+
+
+
+/* Animation only with no preference */
+@media (prefers-reduced-motion: no-preference) {
+    #FullscreenExitIcon.Hovered #exit-tl-corner { animation: shrinkTL var(--animation-params); }
+    #FullscreenExitIcon.Hovered #exit-tr-corner { animation: shrinkTR var(--animation-params); }
+    #FullscreenExitIcon.Hovered #exit-br-corner { animation: shrinkBR var(--animation-params); }
+    #FullscreenExitIcon.Hovered #exit-bl-corner { animation: shrinkBL var(--animation-params); }
+}
+
+@keyframes shrinkTL {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(var(--shrink-size)) translateY(var(--shrink-size)); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes shrinkTR {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(var(--negative-shrink-size)) translateY(var(--shrink-size)); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes shrinkBR {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(var(--negative-shrink-size)) translateY(var(--negative-shrink-size)); }
+    100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes shrinkBL {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(var(--shrink-size)) translateY(var(--negative-shrink-size)); }
+    100% { transform: translateX(0) translateY(0); }
+}

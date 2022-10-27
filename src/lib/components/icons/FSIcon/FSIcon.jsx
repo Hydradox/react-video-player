@@ -1,4 +1,5 @@
-import styles from './FSIcon.module.scss';
+import { useEffect } from 'react';
+import styles from './FSIcon.module.css';
 
 function FSIcon({ isFullscreen, isHovered }) {
     const fsEnter = () => {
@@ -52,7 +53,7 @@ function FSIcon({ isFullscreen, isHovered }) {
     }
 
 
-    return isFullscreen ? fsEnter() : fsExit();
+    return isFullscreen ? fsExit() : fsEnter();
 }
 
 

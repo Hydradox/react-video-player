@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import style from './styles/VideoPlayer.module.css';
+import style from './VideoPlayer.module.css';
 import useVideo from './hooks/useVideo.js';
 
 // Partial components
@@ -20,8 +20,9 @@ const VideoPlayer = ({
     // useVideo custom hook
     const {
         // States
-        currentTime, duration, bufferedChunks, isHovering, hiddenControls,
-        isPlaying, isFullscreen, volume,
+        currentTime, duration, bufferedChunks, isHovering,
+        hiddenControls, hiddenDebug,
+        isPlaying, isFullscreen, volume, muted,
 
         // Events
         initialLoad,
@@ -29,6 +30,7 @@ const VideoPlayer = ({
         handlePlay,
         handlePause,
         handleVolume,
+        handleContextMenu,
 
         // Mouse events
         handleMouseEnterLeave,
@@ -36,8 +38,9 @@ const VideoPlayer = ({
 
         // Methods
         togglePlayback,
+        toggleFullscreen,
         changeVolume
-    } = useVideo(videoRef);
+    } = useVideo(videoRef, videoPlayerRef);
 
 
     const isTouchDevice = () => {
@@ -48,20 +51,24 @@ const VideoPlayer = ({
 
     return (
         <div
+            ref={videoPlayerRef}
             className={style.VideoPlayer
                 + (hiddenControls ? ` ${style.HiddenControls}` : '')}
             style={{ backgroundColor: backgroundColor }}
             onMouseEnter={handleMouseEnterLeave}
             onMouseLeave={handleMouseEnterLeave}
             onMouseMove={handleMouseMove}
+            onContextMenu={handleContextMenu}
         >
             {/* DEBUG INFO */}
-            <div className={style.DebugInfo}>
+            <div className={style.DebugInfo
+                + ` ${hiddenDebug ? style.Hidden : ''}`}>
                 <strong>Video states</strong>
                 <p>Video progress: {Math.round(currentTime * 10) / 10} / {Math.round(duration * 10) / 10}</p>
                 <p>Buffered chunks: {bufferedChunks.length}</p>
                 <p>Is hovering video: {isHovering.toString()}</p>
-                <p>Is controls hidden: {hiddenControls.toString()}</p>
+                <p>Controls hidden: {hiddenControls.toString()}</p>
+                <p>Is browser touch: {isTouchDevice().toString()}</p>
 
                 <strong>Playback states</strong>
                 <p>Is playing: {isPlaying.toString()}</p>
@@ -96,9 +103,14 @@ const VideoPlayer = ({
                 <Buttons
                     isTouchDevice={isTouchDevice}
                     isPlaying={isPlaying}
+                    isFullscreen={isFullscreen}
                     togglePlayback={togglePlayback}
+                    toggleFullscreen={toggleFullscreen}
                     volume={volume}
                     changeVolume={changeVolume}
+
+                    currentTime={currentTime}
+                    duration={duration}
                 />
 
                 <Timeline

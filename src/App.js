@@ -13,7 +13,7 @@ function App() {
     <div className={"App " + (theaterActive ? "TheatreMode" : "")}>
       <VideoPlayer
         src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
-        backgroundColor="lightgreen"
+        backgroundColor="#111"
         progressBarColor="rgb(24, 146, 0)"
         handleTheaterModeChange={handleTheaterChange}
       />

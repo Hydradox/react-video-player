@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function useVideo(video /* videoPlayer, video, controls, timeline */) {
+function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline */) {
 
     /**
      * VIDEO STATES
@@ -10,6 +10,7 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
     const [bufferedChunks, setBufferedChunks] = useState([]);
     const [isHovering, setIsHovering] = useState(false);
     const [hiddenControls, setHiddenControls] = useState(false);
+    const [hiddenDebug, setHiddenDebug] = useState(false);
 
 
     /**
@@ -18,6 +19,7 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [volume, setVolume] = useState(0);
+    const [muted, setMuted] = useState(false);
 
 
     /**
@@ -73,10 +75,20 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
     const handlePause = () => { setIsPlaying(false); }
 
     // Handle volume change
-    const handleVolume = () => {
-        console.log('Volume:', video.current.volume);
+    const handleVolume = (e) => {
+        console.log('Volume changed', e.type);
         setVolume(video.current.volume);
     }
+
+    const handleContextMenu = (e) => {
+        // Detect shift
+        if (e.shiftKey) {
+            e.preventDefault();
+            setHiddenDebug(!hiddenDebug);
+        }
+    }
+
+    // Handle mute change
 
 
     /**
@@ -93,7 +105,7 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
 
     // Handle mouse enter/leave
     const handleMouseEnterLeave = (e) => {
-        console.log('Mouse enter/leave event');
+        /*console.log('Mouse enter/leave event');
 
         if (e.type === 'mouseenter') {
             setIsHovering(true);
@@ -106,12 +118,12 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
             if(isPlaying) {
                 setHiddenControls(true);
             }
-        }
+        }*/
     }
 
     // Handle mouse move
     const handleMouseMove = (e) => {
-        if(lastMouseMove + 500 < Date.now()) {
+        /*if(lastMouseMove + 500 < Date.now()) {
             console.log('Mouse move event', lastMouseMove);
             lastMouseMove = Date.now();
             setHiddenControls(false);
@@ -127,7 +139,7 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
                     setHiddenControls(true);
                 }
             }, 2000);
-        }
+        }*/
     }
 
 
@@ -137,7 +149,17 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
      * VIDEO METHODS
      */
     const togglePlayback = () => { setIsPlaying(!isPlaying); }
-    const changeVolume = (newVolume) => { setVolume(newVolume); }
+    const changeVolume = (newVolume) => { video.current.volume = newVolume; }
+    const toggleMute = () => { video.current.muted = !video.current.muted; }
+
+    // Toggle fullscreen
+    const toggleFullscreen = () => {
+        if (isFullscreen) {
+            document.exitFullscreen();
+        } else {
+            videoPlayer.current.requestFullscreen();
+        }
+    }
 
 
 
@@ -158,8 +180,9 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
 
     return {
         // States
-        currentTime, duration, bufferedChunks, isHovering, hiddenControls,
-        isPlaying, isFullscreen, volume,
+        currentTime, duration, bufferedChunks, isHovering,
+        hiddenControls, hiddenDebug,
+        isPlaying, isFullscreen, volume, muted,
 
         // Events
         initialLoad,
@@ -167,12 +190,15 @@ function useVideo(video /* videoPlayer, video, controls, timeline */) {
         handlePlay,
         handlePause,
         handleVolume,
+        handleContextMenu,
 
         // Mouse events
         handleMouseEnterLeave,
         handleMouseMove,
+
         // Methods
         togglePlayback,
+        toggleFullscreen,
         changeVolume
     };
 }
