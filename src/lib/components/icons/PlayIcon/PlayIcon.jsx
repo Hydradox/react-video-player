@@ -12,7 +12,6 @@ function PlayIcon() {
                 </clipPath>
             </defs>
         </svg>
-
     );
 }
 

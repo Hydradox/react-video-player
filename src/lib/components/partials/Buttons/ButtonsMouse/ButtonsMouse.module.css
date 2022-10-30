@@ -1,6 +1,6 @@
 .ButtonsMouse {
     --buttons-height: calc(2.4vw + 1.3rem);
-    --buttons-separation: calc(1vw + .2rem);
+    --buttons-separation: calc(1vw + .1rem);
 
 
     width: 100%;
@@ -22,6 +22,9 @@
 }
 
 .Button {
+    background-color: transparent;
+    border: none;
+
     width: auto;
     height: 90%;
     flex-shrink: 0;
@@ -50,7 +53,7 @@
 
 
 .Time {
-    font-size: .8em;
+    font-size: min(calc(.4em + .5vw), .8em);
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     filter: opacity(1);
     cursor: default;
@@ -87,7 +90,7 @@
 .VolumeSlider {
     width: 0;
     height: var(--volumeHeight);
-    overflow-x: hidden;
+    overflow-y: hidden;
     margin-left: 0;
 
     -webkit-appearance: none;

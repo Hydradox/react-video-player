@@ -11,6 +11,10 @@
     isolation: isolate;
 }
 
+.VideoPlayer:focus {
+    outline: none;
+}
+
 .VideoPlayer.HiddenControls {
     cursor: none;
 }

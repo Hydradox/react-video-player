@@ -6,13 +6,17 @@ import useVideo from './hooks/useVideo.js';
 import Buttons from './partials/Buttons/Buttons.js';
 import Timeline from './partials/Timeline/Timeline.js';
 
+// Default poster
+import defaultPoster from './icons/default-poster.jpg';
+
 
 const VideoPlayer = ({
     // Import props
     src,
     backgroundColor,
     progressBarColor,
-    handleTheaterModeChange
+    handleTheaterChange,
+    poster
 }) => {
     const videoRef = useRef(null);
     const videoPlayerRef = useRef(null);
@@ -22,7 +26,7 @@ const VideoPlayer = ({
         // States
         currentTime, duration, bufferedChunks, isHovering,
         hiddenControls, hiddenDebug,
-        isPlaying, isFullscreen, volume, muted,
+        isPlaying, isFullscreen, volume, muted, isTheaterMode, isPIPMode,
 
         // Events
         initialLoad,
@@ -31,6 +35,7 @@ const VideoPlayer = ({
         handlePause,
         handleVolume,
         handleContextMenu,
+        handleInput,
 
         // Mouse events
         handleMouseEnterLeave,
@@ -39,19 +44,29 @@ const VideoPlayer = ({
         // Methods
         togglePlayback,
         toggleFullscreen,
-        changeVolume
-    } = useVideo(videoRef, videoPlayerRef);
+        changeVolume,
+        toggleTheaterMode,
+        togglePIPMode
+    } = useVideo(videoRef, videoPlayerRef, handleTheaterChange);
 
 
+    // Check touch device
     const isTouchDevice = () => {
         return (('ontouchstart' in window) ||
             (navigator.maxTouchPoints > 0));
     }
 
 
+    // Check if handle theater mode change is a function
+    const isHandleTheaterModeChangeFunction = () => {
+        return (typeof handleTheaterChange === 'function');
+    }
+
+
     return (
         <div
             ref={videoPlayerRef}
+            tabIndex="0"
             className={style.VideoPlayer
                 + (hiddenControls ? ` ${style.HiddenControls}` : '')}
             style={{ backgroundColor: backgroundColor }}
@@ -59,6 +74,7 @@ const VideoPlayer = ({
             onMouseLeave={handleMouseEnterLeave}
             onMouseMove={handleMouseMove}
             onContextMenu={handleContextMenu}
+            onKeyDown={handleInput}
         >
             {/* DEBUG INFO */}
             <div className={style.DebugInfo
@@ -74,6 +90,9 @@ const VideoPlayer = ({
                 <p>Is playing: {isPlaying.toString()}</p>
                 <p>Is fullscreen: {isFullscreen.toString()}</p>
                 <p>Volume: {Math.round(volume / 1 * 1000) / 10 + ' %'}</p>
+                <p>Is muted: {muted.toString()}</p>
+                <p>Is theater mode: {isTheaterMode.toString()}</p>
+                <p>Is PIP mode: {isPIPMode.toString()}</p>
             </div>
 
 
@@ -83,7 +102,7 @@ const VideoPlayer = ({
                 src={src}
                 className={style.Video}
                 /* controls */
-                muted
+                poster={poster || defaultPoster}
 
                 onLoadedMetadata={initialLoad}
                 onProgress={handleProgress}
@@ -111,6 +130,11 @@ const VideoPlayer = ({
 
                     currentTime={currentTime}
                     duration={duration}
+                    isTheaterMode={isTheaterMode}
+                    toggleTheaterMode={toggleTheaterMode}
+                    isPIPMode={isPIPMode}
+                    togglePIPMode={togglePIPMode}
+                    isHandleTheaterModeChangeFunction={isHandleTheaterModeChangeFunction}
                 />
 
                 <Timeline

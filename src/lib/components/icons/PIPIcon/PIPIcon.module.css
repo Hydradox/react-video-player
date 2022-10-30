@@ -1,0 +1,12 @@
+@media (prefers-reduced-motion: no-preference) {
+    #PIPIcon.Hovered #window {
+        animation: shakewindow .5s ease-in-out 0s 1;
+    }
+}
+
+ 
+@keyframes shakewindow {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-7%, -7%); }
+    100% { transform: translate(0, 0); }
+}

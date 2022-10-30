@@ -1,0 +1,7 @@
+#TheaterIcon {
+    transition: transform 150ms ease-in-out;
+}
+
+#TheaterIcon.TheaterActive {
+    transform: scaleX(.7) scaleY(.8);
+}

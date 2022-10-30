@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import styles from './FSIcon.module.css';
 
 function FSIcon({ isFullscreen, isHovered }) {

@@ -5,12 +5,13 @@ body {
 
 .App {
   max-width: 100%;
-  width: 1200px;
+  width: 1000px;
+  max-height: 600px;
   aspect-ratio: 16 / 9;
 
   margin-inline: auto;
 }
 
-.TheatreMode {
+.TheaterMode {
   width: 100%;
 }

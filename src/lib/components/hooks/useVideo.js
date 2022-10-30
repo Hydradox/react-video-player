@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline */) {
+function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video, controls, timeline */) {
 
     /**
      * VIDEO STATES
@@ -18,8 +18,10 @@ function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline *
      */
     const [isPlaying, setIsPlaying] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [volume, setVolume] = useState(0);
+    const [volume, setVolume] = useState(.8);
     const [muted, setMuted] = useState(false);
+    const [isTheaterMode, setIsTheaterMode] = useState(false);
+    const [isPIPMode, setIsPIPMode] = useState(false);
 
 
     /**
@@ -76,7 +78,6 @@ function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline *
 
     // Handle volume change
     const handleVolume = (e) => {
-        console.log('Volume changed', e.type);
         setVolume(video.current.volume);
     }
 
@@ -88,7 +89,31 @@ function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline *
         }
     }
 
-    // Handle mute change
+    // Handle keyboard input on video player
+    const handleInput = (e) => {
+        // If key was pressend on button
+        if (e.target.tagName === 'BUTTON') return;
+
+        // Spacebar - Toggle playback
+        if (e.keyCode === 32) return togglePlayback();
+
+        // Right arrow/Left arrow - Seek forward/backward
+        if (e.keyCode === 39) return skipForward();
+        if (e.keyCode === 37) return skipBackward();
+
+        // Up arrow/Down arrow - Increase/decrease volume
+        if (e.keyCode === 38) return increaseVolume();
+        if (e.keyCode === 40) return decreaseVolume();
+
+        // F - Toggle fullscreen
+        if (e.keyCode === 70) return toggleFullscreen();
+
+        // M - Toggle mute
+        // if (e.keyCode === 77) return toggleMute();
+
+        // T - Toggle theater mode
+        if (e.keyCode === 84) return toggleTheaterMode();
+    }
 
 
     /**
@@ -161,6 +186,59 @@ function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline *
         }
     }
 
+    // Skip forward/backward
+    let skipStep = 5;
+
+    const skipForward = () => {
+        if(video.current.currentTime + skipStep > video.current.duration) {
+            video.current.currentTime = video.current.duration;
+        } else {
+            video.current.currentTime += skipStep;
+        }
+    }
+    const skipBackward = () => {
+        if(video.current.currentTime - skipStep < 0) {
+            video.current.currentTime = 0;
+        } else {
+            video.current.currentTime -= skipStep;
+        }
+    }
+
+    // Increase/decrease volume
+    let volumeStep = 0.1;
+
+    const increaseVolume = () => {
+        if(video.current.volume + volumeStep > 1) {
+            video.current.volume = 1;
+        } else {
+            video.current.volume += volumeStep;
+        }
+    }
+    const decreaseVolume = () => {
+        if(video.current.volume - volumeStep < 0) {
+            video.current.volume = 0;
+        } else {
+            video.current.volume -= volumeStep;
+        }
+    }
+
+    // Toggle theater mode
+    const toggleTheaterMode = () => {
+        handleTheaterChange(!isTheaterMode);
+        setIsTheaterMode(!isTheaterMode);
+    }
+    // Toggle PIP mode
+    const togglePIPMode = () => {
+        if (document.pictureInPictureElement) {
+            document.exitPictureInPicture();
+            setIsPIPMode(false);
+        } else if (document.pictureInPictureEnabled) {
+            video.current.requestPictureInPicture();
+            setIsPIPMode(true);
+        }
+
+        setIsPIPMode(!isPIPMode);
+    }
 
 
 
@@ -177,12 +255,11 @@ function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline *
     }, [isPlaying]);
 
 
-
     return {
         // States
         currentTime, duration, bufferedChunks, isHovering,
         hiddenControls, hiddenDebug,
-        isPlaying, isFullscreen, volume, muted,
+        isPlaying, isFullscreen, volume, muted, isTheaterMode,isPIPMode,
 
         // Events
         initialLoad,
@@ -191,6 +268,7 @@ function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline *
         handlePause,
         handleVolume,
         handleContextMenu,
+        handleInput,
 
         // Mouse events
         handleMouseEnterLeave,
@@ -199,7 +277,9 @@ function useVideo(video, videoPlayer /* videoPlayer, video, controls, timeline *
         // Methods
         togglePlayback,
         toggleFullscreen,
-        changeVolume
+        changeVolume,
+        toggleTheaterMode,
+        togglePIPMode
     };
 }
 

@@ -7,19 +7,31 @@ import Pause from '../../../icons/PauseIcon/PauseIcon.jsx';
 import Volume from '../../../icons/VolumeIcon/VolumeIcon.jsx';
 
 import Settings from '../../../icons/SettingsIcon/SettingsIcon.jsx';
+import PIPIcon from '../../../icons/PIPIcon/PIPIcon';
+import Theater from '../../../icons/TheaterIcon/TheaterIcon';
 import Fullscreen from '../../../icons/FSIcon/FSIcon.jsx';
 
 
-function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback, toggleFullscreen, volume, changeVolume, currentTime, duration }) {
+function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
+    toggleFullscreen, volume, changeVolume, currentTime, duration,
+    isTheaterMode, toggleTheaterMode, isPIPMode, togglePIPMode,
+    isHandleTheaterModeChangeFunction }) {
+
     const [isHoveringFS, setIsHoveringFS] = useState(false);
+    const [isHoveringPIP, setIsHoveringPIP] = useState(false);
 
     const handleMouseEnterLeaveFS = (e) => {
-        if(e.type === 'mouseenter') {
-            setIsHoveringFS(true);
-        } else {
-            setIsHoveringFS(false);
-        }
+        if(e.type === 'mouseenter')
+            return setIsHoveringFS(true);
+        setIsHoveringFS(false);
     }
+
+    const handleMouseEnterLeavePIP = (e) => {
+        if(e.type === 'mouseenter')
+            return setIsHoveringPIP(true);
+        setIsHoveringPIP(false);
+    }
+    
 
     const formatTime = (time) => {
         const hours = Math.floor(time / 3600);
@@ -33,13 +45,14 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback, toggleFullscree
         <div className={style.ButtonsMouse}>
             <div className={style.Group}>
                 {/* GROUP 1 - Left side */}
-                <div tabIndex="2" className={style.Button} onClick={togglePlayback}>
+                <button tabIndex="1" className={style.Button} onClick={togglePlayback}>
                     {isPlaying ? <Pause /> : <Play />}
-                </div>
+                </button>
 
-                <div tabIndex="3" className={style.Button + ' ' + style.VolumeWrapper}>
+                <button tabIndex="1" className={style.Button + ' ' + style.VolumeWrapper}>
                     <Volume volume={volume} />
                     <input
+                        tabIndex="1"
                         className={style.VolumeSlider}
                         type="range"
                         min="0"
@@ -49,7 +62,7 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback, toggleFullscree
 
                         onChange={(e) => changeVolume(e.target.value)}
                     />
-                </div>
+                </button>
 
                 <div className={style.Button + ` ${style.Time}`}>
                     {formatTime(currentTime)} / {formatTime(duration)}
@@ -59,19 +72,38 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback, toggleFullscree
 
             <div className={style.Group}>
                 {/* GROUP 2 - Right side */}
-                <div className={style.Button 
+                <button tabIndex="1" className={style.Button 
                     + ` ${style.SettingsButton}`}>
                     <Settings />
-                </div>
+                </button>
 
-                <div
+                {document.pictureInPictureEnabled &&
+                    <button
+                        tabIndex="1"
+                        className={style.Button}
+                        onMouseEnter={handleMouseEnterLeavePIP}
+                        onMouseLeave={handleMouseEnterLeavePIP}
+                        onClick={togglePIPMode}
+                    >
+                        <PIPIcon isHovered={isHoveringPIP} />
+                    </button>
+                }
+                
+                {isHandleTheaterModeChangeFunction() &&
+                    <button tabIndex="1" className={style.Button} onClick={toggleTheaterMode}>
+                        <Theater isTheaterMode={isTheaterMode} />
+                    </button>
+                }
+
+                <button
+                    tabIndex="1"
                     className={style.Button}
                     onMouseEnter={handleMouseEnterLeaveFS}
                     onMouseLeave={handleMouseEnterLeaveFS}
                     onClick={toggleFullscreen}
                 >
                     <Fullscreen isFullscreen={isFullscreen} isHovered={isHoveringFS} />
-                </div>
+                </button>
             </div>
         </div>
     )
