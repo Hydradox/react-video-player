@@ -1,5 +1,8 @@
 body {
   background-color: #5a5a5a;
+
+  margin: 0;
+  padding: 0;
 }
 
 
@@ -10,8 +13,11 @@ body {
   aspect-ratio: 16 / 9;
 
   margin-inline: auto;
+
+  transition: all 250ms ease-in-out;
 }
 
 .TheaterMode {
   width: 100%;
+  max-height: 80vh;
 }

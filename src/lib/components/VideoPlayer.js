@@ -27,6 +27,7 @@ const VideoPlayer = ({
         currentTime, duration, bufferedChunks, isHovering,
         hiddenControls, hiddenDebug,
         isPlaying, isFullscreen, volume, muted, isTheaterMode, isPIPMode,
+        isStalled,
 
         // Events
         initialLoad,
@@ -36,6 +37,7 @@ const VideoPlayer = ({
         handleVolume,
         handleContextMenu,
         handleInput,
+        handleWaitingPlaying,
 
         // Mouse events
         handleMouseEnterLeave,
@@ -45,6 +47,7 @@ const VideoPlayer = ({
         togglePlayback,
         toggleFullscreen,
         changeVolume,
+        changeVideoTime,
         toggleTheaterMode,
         togglePIPMode
     } = useVideo(videoRef, videoPlayerRef, handleTheaterChange);
@@ -81,7 +84,7 @@ const VideoPlayer = ({
                 + ` ${hiddenDebug ? style.Hidden : ''}`}>
                 <strong>Video states</strong>
                 <p>Video progress: {Math.round(currentTime * 10) / 10} / {Math.round(duration * 10) / 10}</p>
-                <p>Buffered chunks: {bufferedChunks.length}</p>
+                <p>Buffered chunks: {bufferedChunks ? bufferedChunks.length : 0}</p>
                 <p>Is hovering video: {isHovering.toString()}</p>
                 <p>Controls hidden: {hiddenControls.toString()}</p>
                 <p>Is browser touch: {isTouchDevice().toString()}</p>
@@ -93,6 +96,7 @@ const VideoPlayer = ({
                 <p>Is muted: {muted.toString()}</p>
                 <p>Is theater mode: {isTheaterMode.toString()}</p>
                 <p>Is PIP mode: {isPIPMode.toString()}</p>
+                <p>Is stalled: {isStalled.toString()}</p>
             </div>
 
 
@@ -109,7 +113,11 @@ const VideoPlayer = ({
                 onPlay={handlePlay}
                 onPause={handlePause}
                 onVolumeChange={handleVolume}
-                onClick={togglePlayback}
+                onWaiting={handleWaitingPlaying}
+                onPlaying={handleWaitingPlaying}
+
+                // User driven events
+                onPointerUp={togglePlayback}
             ></video>
 
 
@@ -117,7 +125,7 @@ const VideoPlayer = ({
             <div
                 className={style.Controls
                     + (hiddenControls ? ` ${style.Hidden}` : '')
-                    + (isTouchDevice() ? ` ${style.Touch}` : '')}
+                    + (isTouchDevice() ? ` ${/*style.Touch*/''}` : '')}
             >
                 <Buttons
                     isTouchDevice={isTouchDevice}
@@ -138,8 +146,21 @@ const VideoPlayer = ({
                 />
 
                 <Timeline
-
+                    currentTime={currentTime}
+                    duration={duration}
+                    bufferedChunks={bufferedChunks}
+                    progressBarColor={progressBarColor}
+                    changeVideoTime={changeVideoTime}
                 />
+            </div>
+
+
+            {/* LOADING SPINNER */}
+            <div className={style.LoadingSpinner + ` ${isStalled ? style.Active : ''}`}>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import useVideo from '../../../hooks/useVideo';
 import style from './ButtonsMouse.module.css';
 
 // Icons
@@ -45,8 +46,10 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
         <div className={style.ButtonsMouse}>
             <div className={style.Group}>
                 {/* GROUP 1 - Left side */}
-                <button tabIndex="1" className={style.Button} onClick={togglePlayback}>
+                <button tabIndex="1" className={style.Button} onPointerUp={togglePlayback}>
                     {isPlaying ? <Pause /> : <Play />}
+
+                    <div className={style.ButtonLabel}>{isPlaying ? 'Pausa' : 'Reanudar'} (Barra espaciadora)</div>
                 </button>
 
                 <button tabIndex="1" className={style.Button + ' ' + style.VolumeWrapper}>
@@ -62,6 +65,8 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
 
                         onChange={(e) => changeVolume(e.target.value)}
                     />
+
+                    <div className={style.ButtonLabel}>Silenciar (M)</div>
                 </button>
 
                 <div className={style.Button + ` ${style.Time}`}>
@@ -75,6 +80,8 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
                 <button tabIndex="1" className={style.Button 
                     + ` ${style.SettingsButton}`}>
                     <Settings />
+
+                    <div className={style.ButtonLabel}>Ajustes de reproducción</div>
                 </button>
 
                 {document.pictureInPictureEnabled &&
@@ -83,15 +90,19 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
                         className={style.Button}
                         onMouseEnter={handleMouseEnterLeavePIP}
                         onMouseLeave={handleMouseEnterLeavePIP}
-                        onClick={togglePIPMode}
+                        onPointerUp={togglePIPMode}
                     >
                         <PIPIcon isHovered={isHoveringPIP} />
+
+                        <div className={style.ButtonLabel}>Picture in Picture</div>
                     </button>
                 }
                 
                 {isHandleTheaterModeChangeFunction() &&
-                    <button tabIndex="1" className={style.Button} onClick={toggleTheaterMode}>
+                    <button tabIndex="1" className={style.Button} onPointerUp={toggleTheaterMode}>
                         <Theater isTheaterMode={isTheaterMode} />
+
+                        <div className={style.ButtonLabel}>Modo inmersivo (T)</div>
                     </button>
                 }
 
@@ -100,9 +111,11 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
                     className={style.Button}
                     onMouseEnter={handleMouseEnterLeaveFS}
                     onMouseLeave={handleMouseEnterLeaveFS}
-                    onClick={toggleFullscreen}
+                    onPointerUp={toggleFullscreen}
                 >
                     <Fullscreen isFullscreen={isFullscreen} isHovered={isHoveringFS} />
+
+                    <div className={style.ButtonLabel}>Pantalla completa (F)</div>
                 </button>
             </div>
         </div>

@@ -13,8 +13,9 @@ function App() {
     <div className={"App " + (theaterActive ? "TheaterMode" : "")}>
       <VideoPlayer
         src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        /* Test M3U8: https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8 */
         backgroundColor="#111"
-        progressBarColor="rgb(24, 146, 0)"
+        progressBarColor="DarkTurquoise"
         handleTheaterChange={handleTheaterChange}
         /*poster="https://www.technopixel.org/wp-content/uploads/2021/09/wallpaper-engine-coming-to-android-0-rlQMDEF9.jpeg"*/
       />

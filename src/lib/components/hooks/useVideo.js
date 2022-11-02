@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 
-function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video, controls, timeline */) {
+import defaultIcon from '../icons/default-icon.jpg';
+
+function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline */) {
 
     /**
      * VIDEO STATES
      */
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(1);
-    const [bufferedChunks, setBufferedChunks] = useState([]);
+    const [bufferedChunks, setBufferedChunks] = useState(null);
     const [isHovering, setIsHovering] = useState(false);
     const [hiddenControls, setHiddenControls] = useState(false);
     const [hiddenDebug, setHiddenDebug] = useState(false);
@@ -18,10 +20,11 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
      */
     const [isPlaying, setIsPlaying] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [volume, setVolume] = useState(.8);
+    const [volume, setVolume] = useState(localStorage.getItem('vp-volume') || .8);
     const [muted, setMuted] = useState(false);
-    const [isTheaterMode, setIsTheaterMode] = useState(false);
+    const [isTheaterMode, setIsTheaterMode] = useState(localStorage.getItem('vp-theater-mode') === 'true' ? true : false);
     const [isPIPMode, setIsPIPMode] = useState(false);
+    const [isStalled, setIsStalled] = useState(false);
 
 
     /**
@@ -29,6 +32,8 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
      */
     // First load 
     useEffect(() => {
+        handleTheaterChange(isTheaterMode);
+
         // Track video current time
         const currentTimeInterval = setInterval(() => {
             setCurrentTime(video.current.currentTime);
@@ -54,7 +59,23 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
     // Initial load
     const initialLoad = () => {
         setDuration(video.current.duration);
-        video.current.currentTime = 35;
+        video.current.currentTime = 55;
+
+        // Register media session
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: 'Test video',
+                artist: 'Test artist',
+                artwork: [
+                    { src: defaultIcon, type: 'image/jpg' },
+                ]
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => { togglePlayback(); });
+            navigator.mediaSession.setActionHandler('pause', () => { togglePlayback(); });
+            navigator.mediaSession.setActionHandler('previoustrack', () => { console.log('Previous track'); });
+            navigator.mediaSession.setActionHandler('nexttrack', () => { console.log('Next track'); });
+        }
     }
 
     // On Progress
@@ -91,12 +112,6 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
 
     // Handle keyboard input on video player
     const handleInput = (e) => {
-        // If key was pressend on button
-        if (e.target.tagName === 'BUTTON') return;
-
-        // Spacebar - Toggle playback
-        if (e.keyCode === 32) return togglePlayback();
-
         // Right arrow/Left arrow - Seek forward/backward
         if (e.keyCode === 39) return skipForward();
         if (e.keyCode === 37) return skipBackward();
@@ -113,21 +128,18 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
 
         // T - Toggle theater mode
         if (e.keyCode === 84) return toggleTheaterMode();
+
+        // If key was pressend on button
+        if (e.target.tagName === 'BUTTON') return;
+
+        // Spacebar - Toggle playback
+        if (e.keyCode === 32) return togglePlayback();
     }
 
 
     /**
      * MOUSE EVENTS 
      */
-    let mouseMoveTimeout;
-    let lastMouseMove = 0;
-
-    const clearMouseMoveTimeout = () => {
-        console.log('Clearing mouse move timeout', mouseMoveTimeout);
-        clearTimeout(mouseMoveTimeout);
-        mouseMoveTimeout = null;
-    }
-
     // Handle mouse enter/leave
     const handleMouseEnterLeave = (e) => {
         /*console.log('Mouse enter/leave event');
@@ -137,7 +149,7 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
             setHiddenControls(false);
         } else {
             console.log('Mouse leave event');
-            clearMouseMoveTimeout();
+            clearTimeoutHook();
             setIsHovering(false);
 
             if(isPlaying) {
@@ -148,22 +160,33 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
 
     // Handle mouse move
     const handleMouseMove = (e) => {
-        /*if(lastMouseMove + 500 < Date.now()) {
-            console.log('Mouse move event', lastMouseMove);
-            lastMouseMove = Date.now();
-            setHiddenControls(false);
+        /*console.log('Mouse move event');
+        setHiddenControls(false);
+        clearTimeoutHook();
 
-            // Clear all timeouts
-            clearMouseMoveTimeout();
+        // Set new timeout
+        setTimeoutHook(callback, 2000)*/
+    }
 
-            // Set new timeout
-            mouseMoveTimeout = setTimeout(() => {
-                console.log('Mouse move timeout. is playing:', isPlaying, 'Timeout:', mouseMoveTimeout);
+    const callback = () => {
+        console.log('Mouse move timeout. is playing:', isPlaying);
 
-                if(!isPlaying) {
-                    setHiddenControls(true);
-                }
-            }, 2000);
+        if(!isPlaying) {
+            setHiddenControls(true);
+        }
+    }
+
+    // Handle waiting
+    const handleWaitingPlaying = (e) => {
+        /*if (e.type === 'waiting') {
+            waitingTimeout = setTimeout(() => {
+                console.log('Waiting');
+                setIsStalled(true);
+            }, 1000);
+        } else {
+            
+            console.log('Playing');
+            setIsStalled(false);
         }*/
     }
 
@@ -173,8 +196,13 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
     /**
      * VIDEO METHODS
      */
-    const togglePlayback = () => { setIsPlaying(!isPlaying); }
+    const togglePlayback = (e) => {
+        if(e === undefined || e.button === 0) {
+            setIsPlaying(!isPlaying);
+        }
+    }
     const changeVolume = (newVolume) => { video.current.volume = newVolume; }
+    const changeVideoTime = (newTime) => { video.current.currentTime = newTime; }
     const toggleMute = () => { video.current.muted = !video.current.muted; }
 
     // Toggle fullscreen
@@ -254,12 +282,23 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
         }
     }, [isPlaying]);
 
+    // Volume and muted
+    useEffect(() => {
+        localStorage.setItem('vp-volume', volume);
+    }, [volume, /* isMuted */]);
+
+    // Theater mode
+    useEffect(() => {
+        localStorage.setItem('vp-theater-mode', isTheaterMode);
+    }, [isTheaterMode]);
+
 
     return {
         // States
         currentTime, duration, bufferedChunks, isHovering,
         hiddenControls, hiddenDebug,
         isPlaying, isFullscreen, volume, muted, isTheaterMode,isPIPMode,
+        isStalled,
 
         // Events
         initialLoad,
@@ -269,6 +308,7 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
         handleVolume,
         handleContextMenu,
         handleInput,
+        handleWaitingPlaying,
 
         // Mouse events
         handleMouseEnterLeave,
@@ -278,6 +318,7 @@ function useVideo(video, videoPlayer, handleTheaterChange /* videoPlayer, video,
         togglePlayback,
         toggleFullscreen,
         changeVolume,
+        changeVideoTime,
         toggleTheaterMode,
         togglePIPMode
     };
