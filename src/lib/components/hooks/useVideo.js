@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
-
+import useTimeout from './useTimeout';
 import defaultIcon from '../icons/default-icon.jpg';
 
 function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline */) {
+
+    const {
+        setTimeoutFn,
+        clearTimeoutFn
+    } = useTimeout();
 
     /**
      * VIDEO STATES
@@ -47,6 +52,8 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
 
         // Cleanup
         return () => {
+            console.log('Cleaning up video');
+
             clearInterval(currentTimeInterval);
             ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(event => {
                 document.removeEventListener(event, handleFullscreenChange);
@@ -140,38 +147,50 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
     /**
      * MOUSE EVENTS 
      */
+    let timeout = null;
+    let lastTimeout = 0;
+
     // Handle mouse enter/leave
     const handleMouseEnterLeave = (e) => {
-        /*console.log('Mouse enter/leave event');
+        //console.log('Mouse enter/leave event');
 
         if (e.type === 'mouseenter') {
             setIsHovering(true);
             setHiddenControls(false);
         } else {
-            console.log('Mouse leave event');
-            clearTimeoutHook();
+            // Exiting video player
+            clearTimeout(timeout);
             setIsHovering(false);
 
             if(isPlaying) {
                 setHiddenControls(true);
             }
-        }*/
+        }
+
+        console.log('Test: ', timeout);
     }
 
     // Handle mouse move
     const handleMouseMove = (e) => {
-        /*console.log('Mouse move event');
+        if(lastTimeout + 500 > Date.now()) return;
+        lastTimeout = Date.now();
+
+        //console.log('Mouse move event');
         setHiddenControls(false);
-        clearTimeoutHook();
+        clearTimeout(timeout);
 
         // Set new timeout
-        setTimeoutHook(callback, 2000)*/
+        timeout = setTimeout(callback, 2000);
+        console.log('Setting Test: ', timeout);
     }
 
     const callback = () => {
-        console.log('Mouse move timeout. is playing:', isPlaying);
+        // console.log('Mouse move timeout. is playing:', isPlaying);
+        console.log('Making Test: ', timeout);
+        clearTimeout(timeout);
 
-        if(!isPlaying) {
+        if(isPlaying) {
+            console.log('Hiding controls because playing is', isPlaying);
             setHiddenControls(true);
         }
     }
