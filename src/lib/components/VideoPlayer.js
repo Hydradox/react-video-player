@@ -20,6 +20,7 @@ const VideoPlayer = ({
 }) => {
     const videoRef = useRef(null);
     const videoPlayerRef = useRef(null);
+    const controlsRef = useRef(null);
 
     // useVideo custom hook
     const {
@@ -50,7 +51,7 @@ const VideoPlayer = ({
         changeVideoTime,
         toggleTheaterMode,
         togglePIPMode
-    } = useVideo(videoRef, videoPlayerRef, handleTheaterChange);
+    } = useVideo(videoRef, videoPlayerRef, controlsRef, handleTheaterChange);
 
 
     // Check touch device
@@ -123,6 +124,7 @@ const VideoPlayer = ({
 
             {/* CONTROLS */}
             <div
+            ref={controlsRef}
                 className={style.Controls
                     + (hiddenControls ? ` ${style.Hidden}` : '')
                     + (isTouchDevice() ? ` ${/*style.Touch*/''}` : '')}

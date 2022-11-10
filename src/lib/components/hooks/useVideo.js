@@ -1,13 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useTimeout from './useTimeout';
 import defaultIcon from '../icons/default-icon.jpg';
 
-function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline */) {
-
-    const {
-        setTimeoutFn,
-        clearTimeoutFn
-    } = useTimeout();
+function useVideo(video, videoPlayer, controls, handleTheaterChange /* controls, timeline */) {
+    const { timeoutFn, clearFn } = useTimeout();
 
     /**
      * VIDEO STATES
@@ -31,6 +27,9 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
     const [isPIPMode, setIsPIPMode] = useState(false);
     const [isStalled, setIsStalled] = useState(false);
 
+    const [mediaSessionRegistered, setMediaSessionRegistered] = useState(false);
+    const playingStateRef = useRef(isPlaying);
+
 
     /**
      * VIDEO EVENTS
@@ -52,8 +51,6 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
 
         // Cleanup
         return () => {
-            console.log('Cleaning up video');
-
             clearInterval(currentTimeInterval);
             ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(event => {
                 document.removeEventListener(event, handleFullscreenChange);
@@ -67,22 +64,9 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
     const initialLoad = () => {
         setDuration(video.current.duration);
         video.current.currentTime = 55;
+        video.current.volume = volume;
 
-        // Register media session
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: 'Test video',
-                artist: 'Test artist',
-                artwork: [
-                    { src: defaultIcon, type: 'image/jpg' },
-                ]
-            });
-
-            navigator.mediaSession.setActionHandler('play', () => { togglePlayback(); });
-            navigator.mediaSession.setActionHandler('pause', () => { togglePlayback(); });
-            navigator.mediaSession.setActionHandler('previoustrack', () => { console.log('Previous track'); });
-            navigator.mediaSession.setActionHandler('nexttrack', () => { console.log('Next track'); });
-        }
+        videoPlayer.current.focus();
     }
 
     // On Progress
@@ -105,7 +89,7 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
     const handlePause = () => { setIsPlaying(false); }
 
     // Handle volume change
-    const handleVolume = (e) => {
+    const handleVolume = () => {
         setVolume(video.current.volume);
     }
 
@@ -136,77 +120,74 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
         // T - Toggle theater mode
         if (e.keyCode === 84) return toggleTheaterMode();
 
-        // If key was pressend on button
-        if (e.target.tagName === 'BUTTON') return;
+        // Tab - Handle mouse move
+        if (e.keyCode === 9) return handleMouseMove();
 
-        // Spacebar - Toggle playback
-        if (e.keyCode === 32) return togglePlayback();
+        // If spacebar or enter was pressed on button
+        if (e.target.tagName === 'BUTTON' && (e.keyCode === 32 || e.keyCode === 13)) {
+            // Simulate pointer click
+            e.target.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+            e.target.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
+            return;
+        }
+
+        // Spacebar or P - Toggle playback
+        if (e.keyCode === 32 || e.keyCode === 80) return togglePlayback();
+
+        // I - Toggle picture-in-picture
+        if (e.keyCode === 73) return togglePIPMode();
     }
 
 
     /**
      * MOUSE EVENTS 
      */
-    let timeout = null;
     let lastTimeout = 0;
 
     // Handle mouse enter/leave
     const handleMouseEnterLeave = (e) => {
-        //console.log('Mouse enter/leave event');
-
         if (e.type === 'mouseenter') {
             setIsHovering(true);
             setHiddenControls(false);
+            // Mouse move handles timeout
         } else {
             // Exiting video player
-            clearTimeout(timeout);
+            clearFn('hideControls');
             setIsHovering(false);
 
-            if(isPlaying) {
+            if(isPlaying && !controls.current.matches(':focus-within'))
                 setHiddenControls(true);
-            }
         }
-
-        console.log('Test: ', timeout);
     }
 
     // Handle mouse move
-    const handleMouseMove = (e) => {
+    const handleMouseMove = () => {
         if(lastTimeout + 500 > Date.now()) return;
         lastTimeout = Date.now();
 
-        //console.log('Mouse move event');
         setHiddenControls(false);
-        clearTimeout(timeout);
-
-        // Set new timeout
-        timeout = setTimeout(callback, 2000);
-        console.log('Setting Test: ', timeout);
+        timeoutFn('hideControls', hideControlsTimeoutCallback, 2000);
     }
 
-    const callback = () => {
-        // console.log('Mouse move timeout. is playing:', isPlaying);
-        console.log('Making Test: ', timeout);
-        clearTimeout(timeout);
+    const hideControlsTimeoutCallback = () => {
 
-        if(isPlaying) {
-            console.log('Hiding controls because playing is', isPlaying);
+        if(isPlaying)
             setHiddenControls(true);
-        }
     }
+
 
     // Handle waiting
     const handleWaitingPlaying = (e) => {
-        /*if (e.type === 'waiting') {
-            waitingTimeout = setTimeout(() => {
-                console.log('Waiting');
-                setIsStalled(true);
-            }, 1000);
+        if (e.type === 'waiting') {
+            timeoutFn('stalled', stalledTimeoutCallback, 500);
         } else {
-            
-            console.log('Playing');
+            clearFn('stalled');
             setIsStalled(false);
-        }*/
+        }
+    }
+    
+    const stalledTimeoutCallback = () => {
+        setIsStalled(true);
     }
 
 
@@ -216,7 +197,13 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
      * VIDEO METHODS
      */
     const togglePlayback = (e) => {
-        if(e === undefined || e.button === 0) {
+        if (!mediaSessionRegistered && 'mediaSession' in navigator)
+            registerMediaSession();
+
+        handleMouseMove();
+        console.log('Toggle playback', e);
+        if(e === undefined || e.button === 0 || e.action === 'play' || e.action === 'pause') {
+            console.log('Actual state', isPlaying, 'New state', !isPlaying);
             setIsPlaying(!isPlaying);
         }
     }
@@ -237,6 +224,7 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
     let skipStep = 5;
 
     const skipForward = () => {
+        handleMouseMove();
         if(video.current.currentTime + skipStep > video.current.duration) {
             video.current.currentTime = video.current.duration;
         } else {
@@ -244,6 +232,7 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
         }
     }
     const skipBackward = () => {
+        handleMouseMove();
         if(video.current.currentTime - skipStep < 0) {
             video.current.currentTime = 0;
         } else {
@@ -255,6 +244,7 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
     let volumeStep = 0.1;
 
     const increaseVolume = () => {
+        handleMouseMove();
         if(video.current.volume + volumeStep > 1) {
             video.current.volume = 1;
         } else {
@@ -262,6 +252,7 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
         }
     }
     const decreaseVolume = () => {
+        handleMouseMove();
         if(video.current.volume - volumeStep < 0) {
             video.current.volume = 0;
         } else {
@@ -287,6 +278,25 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
         setIsPIPMode(!isPIPMode);
     }
 
+    // Register media session
+    const registerMediaSession = () => {
+        setMediaSessionRegistered(true);
+
+        // Register media session
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: 'Test video',
+            artist: 'Test artist',
+            artwork: [
+                { src: defaultIcon, type: 'image/jpg' },
+            ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', togglePlayback);
+        navigator.mediaSession.setActionHandler('pause', togglePlayback);
+        navigator.mediaSession.setActionHandler('previoustrack', () => { console.log('Previous track'); });
+        navigator.mediaSession.setActionHandler('nexttrack', () => { console.log('Next track'); });
+    }
+
 
 
     /**
@@ -294,10 +304,17 @@ function useVideo(video, videoPlayer, handleTheaterChange /* controls, timeline 
      */
     // Play/Pause
     useEffect(() => {
+        console.log('Play/Pause', isPlaying);
+        playingStateRef.current = isPlaying;
+
         if (isPlaying) {
             video.current.play();
+            if (mediaSessionRegistered)
+                navigator.mediaSession.playbackState = 'playing';
         } else {
             video.current.pause();
+            if (mediaSessionRegistered)
+                navigator.mediaSession.playbackState = 'paused';
         }
     }, [isPlaying]);
 

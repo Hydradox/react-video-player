@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import useVideo from '../../../hooks/useVideo';
+import { useState, useEffect } from 'react';
 import style from './ButtonsMouse.module.css';
 
 // Icons
@@ -20,6 +19,7 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
 
     const [isHoveringFS, setIsHoveringFS] = useState(false);
     const [isHoveringPIP, setIsHoveringPIP] = useState(false);
+    const [settingsMenuActive, setSettingsMenuActive] = useState(false);
 
     const handleMouseEnterLeaveFS = (e) => {
         if(e.type === 'mouseenter')
@@ -41,6 +41,8 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
 
         return `${hours > 0 ? hours + ':' : ''}${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
     }
+
+    const toggleSettingsMenu = () => setSettingsMenuActive(!settingsMenuActive);
 
     return (
         <div className={style.ButtonsMouse}>
@@ -77,12 +79,17 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
 
             <div className={style.Group}>
                 {/* GROUP 2 - Right side */}
-                <button tabIndex="1" className={style.Button 
-                    + ` ${style.SettingsButton}`}>
+                <button tabIndex="1" className={style.Button
+                    + ` ${style.SettingsButton}`
+                    + ` ${settingsMenuActive ? style.SettingsActive : ''}`} onPointerUp={toggleSettingsMenu}>
                     <Settings />
 
                     <div className={style.ButtonLabel}>Ajustes de reproducción</div>
                 </button>
+
+                <div className={style.SettingsMenu}>
+                    <button tabIndex="1" className={style.SettingsMenuItem} onPointerUp={toggleTheaterMode}>Toggle theater</button>
+                </div>
 
                 {document.pictureInPictureEnabled &&
                     <button
@@ -94,7 +101,7 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
                     >
                         <PIPIcon isHovered={isHoveringPIP} />
 
-                        <div className={style.ButtonLabel}>Picture in Picture</div>
+                        <div className={style.ButtonLabel}>Picture in Picture (I)</div>
                     </button>
                 }
                 

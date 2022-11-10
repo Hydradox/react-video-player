@@ -80,8 +80,8 @@
     right: -.3rem;
 }
 
-.Button:focus-within .ButtonLabel,
-.Button:hover .ButtonLabel {
+.Button:not(.SettingsActive):focus-visible .ButtonLabel,
+.Button:not(.SettingsActive):hover .ButtonLabel {
     opacity: .7;
 }
 
@@ -103,6 +103,27 @@
         transition: transform 150ms ease-in-out;
         transform: rotate(90deg);
     }
+}
+
+
+.SettingsMenu {
+    position: absolute;
+    top: -2.7rem;
+    right: .5rem;
+
+    width: 30%;
+    padding: .2rem .5rem;
+    border-radius: .2rem;
+
+    background-color: #1a1a1a;
+    color: #fff;
+    opacity: 0;
+
+    transition: opacity 100ms ease-in-out;
+}
+
+.SettingsButton.SettingsActive ~ .SettingsMenu {
+    opacity: .8;
 }
 
 
