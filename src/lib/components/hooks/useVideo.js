@@ -23,7 +23,8 @@ function useVideo(video, videoPlayer, controls, handleTheaterChange /* controls,
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [volume, setVolume] = useState(localStorage.getItem('vp-volume') || .8);
     const [muted, setMuted] = useState(false);
-    const [isTheaterMode, setIsTheaterMode] = useState(localStorage.getItem('vp-theater-mode') === 'true' ? true : false);
+    const [isHandleTheaterModeChangeFunction, setIsHandleTheaterModeChangeFunction] = useState(typeof handleTheaterChange === 'function');
+    const [isTheaterMode, setIsTheaterMode] = useState(isHandleTheaterModeChangeFunction ? (localStorage.getItem('vp-theater-mode') === 'true' ? true : false) : false);
     const [isPIPMode, setIsPIPMode] = useState(false);
     const [isStalled, setIsStalled] = useState(false);
 
@@ -36,7 +37,9 @@ function useVideo(video, videoPlayer, controls, handleTheaterChange /* controls,
      */
     // First load 
     useEffect(() => {
-        handleTheaterChange(isTheaterMode);
+        if(isHandleTheaterModeChangeFunction) {
+            handleTheaterChange(isTheaterMode);
+        }
 
         // Track video current time
         const currentTimeInterval = setInterval(() => {
@@ -351,6 +354,7 @@ function useVideo(video, videoPlayer, controls, handleTheaterChange /* controls,
         handleMouseMove,
 
         // Methods
+        isHandleTheaterModeChangeFunction,
         togglePlayback,
         toggleFullscreen,
         changeVolume,

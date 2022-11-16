@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useMemo } from 'react';
 import style from './VideoPlayer.module.css';
 import useVideo from './hooks/useVideo.js';
 
@@ -13,7 +13,7 @@ import defaultPoster from './icons/default-poster.jpg';
 const VideoPlayer = ({
     // Import props
     src,
-    backgroundColor,
+    lowResSrc,
     progressBarColor,
     handleTheaterChange,
     poster
@@ -45,6 +45,7 @@ const VideoPlayer = ({
         handleMouseMove,
 
         // Methods
+        isHandleTheaterModeChangeFunction,
         togglePlayback,
         toggleFullscreen,
         changeVolume,
@@ -61,10 +62,31 @@ const VideoPlayer = ({
     }
 
 
-    // Check if handle theater mode change is a function
-    const isHandleTheaterModeChangeFunction = () => {
-        return (typeof handleTheaterChange === 'function');
-    }
+    /*const VideoComponent = useMemo(({
+        videoRef,
+        src,
+        poster
+    }) => {
+        return (
+            <video
+                ref={videoRef}
+                src={src}
+                className={style.Video}
+                /* controls *
+                poster={poster || defaultPoster}
+
+                onLoadedMetadata={initialLoad}
+                onProgress={handleProgress}
+                onPlay={handlePlay}
+                onPause={handlePause}
+                onVolumeChange={handleVolume}
+                onWaiting={handleWaitingPlaying}
+                onPlaying={handleWaitingPlaying}
+
+                // User driven events
+                onPointerUp={togglePlayback}
+            ></video>
+    )}, [videoRef, src, poster]);})*/
 
 
     return (
@@ -73,7 +95,6 @@ const VideoPlayer = ({
             tabIndex="0"
             className={style.VideoPlayer
                 + (hiddenControls ? ` ${style.HiddenControls}` : '')}
-            style={{ backgroundColor: backgroundColor }}
             onMouseEnter={handleMouseEnterLeave}
             onMouseLeave={handleMouseEnterLeave}
             onMouseMove={handleMouseMove}
@@ -169,4 +190,5 @@ const VideoPlayer = ({
 }
 
 
-export default VideoPlayer;
+// Export component with memo
+export default React.memo(VideoPlayer);

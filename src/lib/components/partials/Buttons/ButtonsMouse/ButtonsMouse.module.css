@@ -108,12 +108,12 @@
 
 .SettingsMenu {
     position: absolute;
-    top: -2.7rem;
+    bottom: 3.7rem;
     right: .5rem;
 
-    width: 30%;
-    padding: .2rem .5rem;
-    border-radius: .2rem;
+    width: min(20rem, 50%);
+    padding: .5rem 0;
+    border-radius: .5rem;
 
     background-color: #1a1a1a;
     color: #fff;
@@ -124,6 +124,25 @@
 
 .SettingsButton.SettingsActive ~ .SettingsMenu {
     opacity: .8;
+}
+
+.SettingsMenuItem {
+    z-index: 5;
+    width: 100%;
+    height: min(calc(2.4vw + 1rem), 2.5rem);
+    font-size: min(calc(.6em + .5vw), .9em);
+
+    background-color: #1a1a1a;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+}
+
+.SettingsMenuItem:hover {
+    background-color: #2a2a2a;
 }
 
 

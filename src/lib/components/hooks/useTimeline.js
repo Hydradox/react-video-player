@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 
-function useTimeline(timeline, style, bufferedChunks, duration, changeVideoTime) {
+function useTimeline(timeline, style, bufferedChunks, currentTime, duration, changeVideoTime) {
     /**
      * STATES
      */
     const [isDraggingTimeline, setIsDraggingTimeline] = useState(false);
+    const [thumbOffset, setThumbOffset] = useState(currentTime / duration * 100);
     
 
     /**
@@ -21,7 +22,6 @@ function useTimeline(timeline, style, bufferedChunks, duration, changeVideoTime)
             try {
                 if(e.target.className.startsWith('Timeline')) {
                     setIsDraggingTimeline(true);
-                    changeVideoTime(getVideoProgress(e));
                 }
             } catch(err) {}
         }
@@ -29,13 +29,20 @@ function useTimeline(timeline, style, bufferedChunks, duration, changeVideoTime)
         // Handle pointer move
         const handlePointerMove = (e) => {
             if(isDraggingTimeline) {
-                changeVideoTime(getVideoProgress(e));
+                const timelineRect = timeline.current.getBoundingClientRect();
+                const pointerOffset = e.clientX - timelineRect.left;
+                const pointerOffsetPercentage = (pointerOffset / timelineRect.width) * 100;
+
+                setThumbOffset(pointerOffsetPercentage);
             }
         }
 
         // Handle pointer up
         const handlePointerUp = (e) => {
-            setIsDraggingTimeline(false);
+            if(isDraggingTimeline) {
+                setIsDraggingTimeline(false);
+                changeVideoTime(getVideoProgress(e));
+            }
         }
 
         // Set pointer listeners
@@ -51,6 +58,11 @@ function useTimeline(timeline, style, bufferedChunks, duration, changeVideoTime)
             window.removeEventListener('pointerup', handlePointerUp);
         }
     }, [isDraggingTimeline])
+
+
+    useEffect(() => {
+        console.log('thumbOffset', thumbOffset);
+    }, [thumbOffset])
 
 
     /**
@@ -88,8 +100,23 @@ function useTimeline(timeline, style, bufferedChunks, duration, changeVideoTime)
         return videoProgress;
     }
 
+    // Change thumb offset
+    const changeThumbOffset = (offset) => {
+        if(offset > 100) {
+            setThumbOffset(100);
+        } else if(offset < 0) {
+            setThumbOffset(0);
+        } else {
+            setThumbOffset(offset);
+        }
+    }
+
 
     return {
+        // States
+        thumbOffset,
+        isDraggingTimeline,
+
         // Methods
         mapBufferedChunks
     };

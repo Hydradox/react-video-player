@@ -22,17 +22,17 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
     const [settingsMenuActive, setSettingsMenuActive] = useState(false);
 
     const handleMouseEnterLeaveFS = (e) => {
-        if(e.type === 'mouseenter')
+        if (e.type === 'mouseenter')
             return setIsHoveringFS(true);
         setIsHoveringFS(false);
     }
 
     const handleMouseEnterLeavePIP = (e) => {
-        if(e.type === 'mouseenter')
+        if (e.type === 'mouseenter')
             return setIsHoveringPIP(true);
         setIsHoveringPIP(false);
     }
-    
+
 
     const formatTime = (time) => {
         const hours = Math.floor(time / 3600);
@@ -87,14 +87,30 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
                     <div className={style.ButtonLabel}>Ajustes de reproducción</div>
                 </button>
 
-                <div className={style.SettingsMenu}>
-                    <button tabIndex="1" className={style.SettingsMenuItem} onPointerUp={toggleTheaterMode}>Toggle theater</button>
-                </div>
+                {settingsMenuActive &&
+                    <div className={style.SettingsMenu}>
+                        <button
+                            tabIndex="1"
+                            className={style.SettingsMenuItem}
+                            onPointerUp={toggleTheaterMode}
+                        >Toggle theater</button>
+                        <button
+                            tabIndex="1"
+                            className={style.SettingsMenuItem}
+                            onPointerUp={toggleTheaterMode}
+                        >Toggle theater</button>
+                        <button
+                            tabIndex="1"
+                            className={style.SettingsMenuItem}
+                            onPointerUp={toggleTheaterMode}
+                        >Toggle theater</button>
+                    </div>
+                }
 
                 {document.pictureInPictureEnabled &&
                     <button
                         tabIndex="1"
-                        className={style.Button}
+                        className={style.Button + ` ${settingsMenuActive ? style.SettingsActive : ''}`}
                         onMouseEnter={handleMouseEnterLeavePIP}
                         onMouseLeave={handleMouseEnterLeavePIP}
                         onPointerUp={togglePIPMode}
@@ -104,9 +120,12 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
                         <div className={style.ButtonLabel}>Picture in Picture (I)</div>
                     </button>
                 }
-                
-                {isHandleTheaterModeChangeFunction() &&
-                    <button tabIndex="1" className={style.Button} onPointerUp={toggleTheaterMode}>
+
+                {isHandleTheaterModeChangeFunction &&
+                    <button
+                        tabIndex="1"
+                        className={style.Button + ` ${settingsMenuActive ? style.SettingsActive : ''}`}
+                        onPointerUp={toggleTheaterMode}>
                         <Theater isTheaterMode={isTheaterMode} />
 
                         <div className={style.ButtonLabel}>Modo inmersivo (T)</div>
@@ -115,7 +134,7 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
 
                 <button
                     tabIndex="1"
-                    className={style.Button}
+                    className={style.Button + ` ${settingsMenuActive ? style.SettingsActive : ''}`}
                     onMouseEnter={handleMouseEnterLeaveFS}
                     onMouseLeave={handleMouseEnterLeaveFS}
                     onPointerUp={toggleFullscreen}

@@ -11,6 +11,8 @@
     display: flex;
     align-items: center;
 
+    user-select: none;
+    -webkit-user-drag: none;
     cursor: pointer;
 }
 
@@ -29,7 +31,7 @@
     align-items: center;
 }
 
-.TimelineWrapper:hover .Timeline {
+.TimelineWrapper.IsHovered .Timeline {
     height: var(--hover-height);
 }
 
@@ -73,7 +75,7 @@
     transition: width 100ms ease-in-out, height 100ms ease-in-out;
 }
 
-.TimelineWrapper:hover .Thumb {
+.TimelineWrapper.IsHovered .Thumb {
     width: calc(var(--hover-height) * 1.5);
     height: calc(var(--hover-height) * 1.5
     );
