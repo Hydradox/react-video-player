@@ -15,7 +15,7 @@ import Fullscreen from '../../../icons/FSIcon/FSIcon.jsx';
 function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
     toggleFullscreen, volume, changeVolume, currentTime, duration,
     isTheaterMode, toggleTheaterMode, isPIPMode, togglePIPMode,
-    isHandleTheaterModeChangeFunction }) {
+    isHandleTheaterModeChangeFunction, formatTime }) {
 
     const [isHoveringFS, setIsHoveringFS] = useState(false);
     const [isHoveringPIP, setIsHoveringPIP] = useState(false);
@@ -31,15 +31,6 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
         if (e.type === 'mouseenter')
             return setIsHoveringPIP(true);
         setIsHoveringPIP(false);
-    }
-
-
-    const formatTime = (time) => {
-        const hours = Math.floor(time / 3600);
-        const minutes = Math.floor((time - hours * 3600) / 60);
-        const seconds = Math.floor(time - hours * 3600 - minutes * 60);
-
-        return `${hours > 0 ? hours + ':' : ''}${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
     }
 
     const toggleSettingsMenu = () => setSettingsMenuActive(!settingsMenuActive);
@@ -89,21 +80,27 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
 
                 {settingsMenuActive &&
                     <div className={style.SettingsMenu}>
-                        <button
-                            tabIndex="1"
-                            className={style.SettingsMenuItem}
-                            onPointerUp={toggleTheaterMode}
-                        >Toggle theater</button>
-                        <button
-                            tabIndex="1"
-                            className={style.SettingsMenuItem}
-                            onPointerUp={toggleTheaterMode}
-                        >Toggle theater</button>
-                        <button
-                            tabIndex="1"
-                            className={style.SettingsMenuItem}
-                            onPointerUp={toggleTheaterMode}
-                        >Toggle theater</button>
+                        <div className={style.SettingsMenuContainer}>
+                            <button
+                                tabIndex="1"
+                                className={style.SettingsMenuItem}
+                                onPointerUp={toggleTheaterMode}
+                            >Toggle theater</button>
+                            <button
+                                tabIndex="1"
+                                className={style.SettingsMenuItem}
+                                onPointerUp={toggleTheaterMode}
+                            >Toggle theater</button>
+                            <button
+                                tabIndex="1"
+                                className={style.SettingsMenuItem}
+                                /*onPointerUp={console.log('test')}*/
+                            >Velocidad de reproducción</button>
+                        </div>
+
+                        <div className={style.SettingsSubmenu}>
+                            Submenu hidden when inactive
+                        </div>
                     </div>
                 }
 
@@ -121,7 +118,7 @@ function ButtonsMouse({ isPlaying, isFullscreen, togglePlayback,
                     </button>
                 }
 
-                {isHandleTheaterModeChangeFunction &&
+                {isHandleTheaterModeChangeFunction && !isFullscreen &&
                     <button
                         tabIndex="1"
                         className={style.Button + ` ${settingsMenuActive ? style.SettingsActive : ''}`}

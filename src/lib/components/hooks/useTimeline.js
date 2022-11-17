@@ -1,11 +1,25 @@
 import { useState, useEffect } from 'react';
 
-function useTimeline(timeline, style, bufferedChunks, currentTime, duration, changeVideoTime) {
+function useTimeline(videoPlayer, videoRef, timeline, lowVideo, hoverModalRef, style, bufferedChunks, currentTime, duration, changeVideoTime) {
     /**
      * STATES
      */
     const [isDraggingTimeline, setIsDraggingTimeline] = useState(false);
     const [thumbOffset, setThumbOffset] = useState(currentTime / duration * 100);
+
+    const [isHovered, setIsHovered] = useState(false);
+    const [lowVideoTime, setLowVideoTime] = useState(0);
+    const [lowVideoOffset, setLowVideoOffset] = useState(0);
+
+
+    useEffect(() => {
+        changeThumbOffset(currentTime / duration * 100);
+    }, [currentTime, duration]);
+
+    useEffect(() => {
+        if(lowVideo.current !== null)
+            lowVideo.current.currentTime = lowVideoTime;
+    }, [lowVideoTime]);
     
 
     /**
@@ -22,18 +36,39 @@ function useTimeline(timeline, style, bufferedChunks, currentTime, duration, cha
             try {
                 if(e.target.className.startsWith('Timeline')) {
                     setIsDraggingTimeline(true);
+                    videoRef.current.pause();
                 }
             } catch(err) {}
         }
 
         // Handle pointer move
         const handlePointerMove = (e) => {
+            // Get sizes
+            const timelineSize = timeline.current.offsetWidth;
+            const hoverModalSize = hoverModalRef.current.offsetWidth;
+            const cursorPos = e.clientX - timeline.current.getBoundingClientRect().left;
+
+            setLowVideoTime(cursorPos / timelineSize * duration);
+
+            // If cursor below 0
+            if(cursorPos - hoverModalSize / 2 < 0) {
+                setLowVideoOffset('0%');
+
+            // If cursor above max
+            } else if(cursorPos > timelineSize - hoverModalSize / 2) {
+                setLowVideoOffset(`calc(${timelineSize - hoverModalSize}px)`);
+
+            // If cursor in between
+            } else {
+                setLowVideoOffset(`${cursorPos  - hoverModalSize / 2}px`);
+            }
+
             if(isDraggingTimeline) {
                 const timelineRect = timeline.current.getBoundingClientRect();
                 const pointerOffset = e.clientX - timelineRect.left;
                 const pointerOffsetPercentage = (pointerOffset / timelineRect.width) * 100;
 
-                setThumbOffset(pointerOffsetPercentage);
+                changeThumbOffset(pointerOffsetPercentage);
             }
         }
 
@@ -42,6 +77,8 @@ function useTimeline(timeline, style, bufferedChunks, currentTime, duration, cha
             if(isDraggingTimeline) {
                 setIsDraggingTimeline(false);
                 changeVideoTime(getVideoProgress(e));
+                videoPlayer.current.focus();
+                videoRef.current.play();
             }
         }
 
@@ -57,12 +94,7 @@ function useTimeline(timeline, style, bufferedChunks, currentTime, duration, cha
             window.removeEventListener('pointermove', handlePointerMove);
             window.removeEventListener('pointerup', handlePointerUp);
         }
-    }, [isDraggingTimeline])
-
-
-    useEffect(() => {
-        console.log('thumbOffset', thumbOffset);
-    }, [thumbOffset])
+    }, [isDraggingTimeline, duration])
 
 
     /**
@@ -117,8 +149,13 @@ function useTimeline(timeline, style, bufferedChunks, currentTime, duration, cha
         thumbOffset,
         isDraggingTimeline,
 
+        isHovered,
+        lowVideoTime,
+        lowVideoOffset,
+
         // Methods
-        mapBufferedChunks
+        mapBufferedChunks,
+        setIsHovered
     };
 }
 

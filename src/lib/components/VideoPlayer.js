@@ -61,32 +61,14 @@ const VideoPlayer = ({
             (navigator.maxTouchPoints > 0));
     }
 
+    // Format time
+    const formatTime = (time) => {
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor((time - hours * 3600) / 60);
+        const seconds = Math.floor(time - hours * 3600 - minutes * 60);
 
-    /*const VideoComponent = useMemo(({
-        videoRef,
-        src,
-        poster
-    }) => {
-        return (
-            <video
-                ref={videoRef}
-                src={src}
-                className={style.Video}
-                /* controls *
-                poster={poster || defaultPoster}
-
-                onLoadedMetadata={initialLoad}
-                onProgress={handleProgress}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                onVolumeChange={handleVolume}
-                onWaiting={handleWaitingPlaying}
-                onPlaying={handleWaitingPlaying}
-
-                // User driven events
-                onPointerUp={togglePlayback}
-            ></video>
-    )}, [videoRef, src, poster]);})*/
+        return `${hours > 0 ? hours + ':' : ''}${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    }
 
 
     return (
@@ -166,14 +148,19 @@ const VideoPlayer = ({
                     isPIPMode={isPIPMode}
                     togglePIPMode={togglePIPMode}
                     isHandleTheaterModeChangeFunction={isHandleTheaterModeChangeFunction}
+                    formatTime={formatTime}
                 />
 
                 <Timeline
+                    videoPlayerRef={videoPlayerRef}
+                    videoRef={videoRef}
                     currentTime={currentTime}
                     duration={duration}
                     bufferedChunks={bufferedChunks}
                     progressBarColor={progressBarColor}
                     changeVideoTime={changeVideoTime}
+                    lowResSrc={lowResSrc}
+                    formatTime={formatTime}
                 />
             </div>
 

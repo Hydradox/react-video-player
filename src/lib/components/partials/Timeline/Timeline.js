@@ -3,18 +3,24 @@ import style from './Timeline.module.css';
 import useTimeline from '../../hooks/useTimeline';
 
 
-function Timeline({ currentTime, duration, bufferedChunks, progressBarColor, changeVideoTime }) {
+function Timeline({ videoPlayerRef, videoRef, currentTime, duration, bufferedChunks, progressBarColor, changeVideoTime, lowResSrc, formatTime }) {
     const timelineRef = useRef(null);
-    const [isHovered, setIsHovered] = useState(false);
+    const hoverModalRef = useRef(null);
+    const lowVideoRef = useRef(null);
 
     const {
         // States
         thumbOffset,
         isDraggingTimeline,
 
+        isHovered,
+        lowVideoTime,
+        lowVideoOffset,
+
         // Methods
-        mapBufferedChunks
-    } = useTimeline(timelineRef, style, bufferedChunks, currentTime, duration, changeVideoTime);
+        mapBufferedChunks,
+        setIsHovered
+    } = useTimeline(videoPlayerRef, videoRef, timelineRef, lowVideoRef, hoverModalRef, style, bufferedChunks, currentTime, duration, changeVideoTime);
 
 
 
@@ -24,8 +30,8 @@ function Timeline({ currentTime, duration, bufferedChunks, progressBarColor, cha
             className={style.TimelineWrapper + (isHovered || isDraggingTimeline ? ' ' + style.IsHovered : '')}
             ref={timelineRef}
 
-            onPointerEnter={() => setIsHovered(true)}
-            onPointerLeave={() => setIsHovered(false)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             <div className={style.Timeline}>
                 <div className={style.BufferedChunksWrapper}>{mapBufferedChunks()}</div>
@@ -40,6 +46,23 @@ function Timeline({ currentTime, duration, bufferedChunks, progressBarColor, cha
                     backgroundColor: progressBarColor
                 }}></div>
             </div>
+
+            <div className={style.HoverModal + (isHovered ? ' ' + style.Visible : '')}
+                ref={hoverModalRef}
+                style={{
+                    left: `${lowVideoOffset}`
+                }}
+            >
+                {lowResSrc && <video
+                    ref={lowVideoRef}
+                    className={style.HoverModalVideo}
+                    src={lowResSrc}
+                ></video>}
+
+                <span>{formatTime(lowVideoTime)}</span>
+            </div>
+
+            <div className={style.TimelineBackground}></div>
         </div>
     );
 }

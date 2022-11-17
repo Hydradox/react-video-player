@@ -204,9 +204,9 @@ function useVideo(video, videoPlayer, controls, handleTheaterChange /* controls,
             registerMediaSession();
 
         handleMouseMove();
-        console.log('Toggle playback', e);
+        //console.log('Toggle playback', e);
         if(e === undefined || e.button === 0 || e.action === 'play' || e.action === 'pause') {
-            console.log('Actual state', isPlaying, 'New state', !isPlaying);
+            //console.log('Actual state', isPlaying, 'New state', !isPlaying);
             setIsPlaying(!isPlaying);
         }
     }
@@ -270,15 +270,15 @@ function useVideo(video, videoPlayer, controls, handleTheaterChange /* controls,
     }
     // Toggle PIP mode
     const togglePIPMode = () => {
+        if(!document.pictureInPictureEnabled) return;
+
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture();
             setIsPIPMode(false);
-        } else if (document.pictureInPictureEnabled) {
+        } else {
             video.current.requestPictureInPicture();
             setIsPIPMode(true);
         }
-
-        setIsPIPMode(!isPIPMode);
     }
 
     // Register media session
@@ -307,7 +307,7 @@ function useVideo(video, videoPlayer, controls, handleTheaterChange /* controls,
      */
     // Play/Pause
     useEffect(() => {
-        console.log('Play/Pause', isPlaying);
+        //console.log('Play/Pause', isPlaying);
         playingStateRef.current = isPlaying;
 
         if (isPlaying) {

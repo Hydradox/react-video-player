@@ -1,6 +1,6 @@
 .TimelineWrapper {
     --normal-height: .2rem;
-    --hover-height: .4rem;
+    --hover-height: .3rem;
 
     position: relative;
     bottom: -.3rem;
@@ -72,11 +72,48 @@
     border-radius: 50%;
     transform: translateX(-50%);
 
-    transition: width 100ms ease-in-out, height 100ms ease-in-out;
+    transition: width 150ms ease-in-out, height 150ms ease-in-out;
 }
 
 .TimelineWrapper.IsHovered .Thumb {
-    width: calc(var(--hover-height) * 1.5);
-    height: calc(var(--hover-height) * 1.5
-    );
+    width: calc(var(--hover-height) * 2.8);
+    height: calc(var(--hover-height) * 2.8);
+}
+
+
+.HoverModal {
+    position: absolute;
+    bottom: .7rem;
+
+    opacity: 0;
+
+    width: min(15rem, calc(10rem + 2vw));
+    height: fit-content;
+    padding-bottom: .7rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: min(calc(.6em + .5vw), .8em);
+
+    user-select: none;
+    cursor: default;
+    pointer-events: none;
+
+    transition: opacity 200ms ease-in-out;
+}
+
+.HoverModal.Visible {
+    opacity: 1;
+}
+
+.HoverModal video {
+    margin-bottom: .7rem;
+    width: 100%;
+    border: 2px solid #fff;
+    border-radius: .4rem;
+    user-select: none;
+    pointer-events: none;
 }
